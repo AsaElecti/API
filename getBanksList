@@ -1,0 +1,66 @@
+using System;
+using System.IO;
+using System.Xml;
+using System.Net;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+					
+public class Program
+{
+	public static void Main()
+	{
+		
+		string url = "https://bank.gov.ua/NBU_BankInfo/get_data_branch?typ=0";
+		
+		HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+		
+		HttpWebResponse httpWebResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+		
+		string response;
+		
+		using (StreamReader streamReader = new StreamReader(httpWebResponse.GetResponseStream()))
+		{
+			response = streamReader.ReadToEnd();
+
+		}
+		
+		//Console.WriteLine(response);
+
+		XmlDocument xDoc = new XmlDocument();
+		xDoc.LoadXml(response);
+		
+		XmlElement xRoot = xDoc.DocumentElement;
+		
+		foreach(XmlNode xnode in xRoot)
+		{
+			// получаем атрибут ROW
+			if(xnode.Name == "ROW")
+			{
+					
+			}
+			// обходим все дочерние узлы элемента ROW
+			foreach(XmlNode childnode in xnode.ChildNodes)
+					{
+						// если узел - GLMFO
+						if(childnode.Name=="GLMFO")
+						{
+							Console.WriteLine("GLMFO:" + childnode.InnerText);
+						}
+						// если узел NAME_E
+						if (childnode.Name == "NAME_E")
+						{
+							Console.WriteLine("NAME_E:" + childnode.InnerText);
+						}
+						// если узел TAN_GOL
+						if (childnode.Name == "STAN_GOL")
+						{
+							Console.WriteLine("STAN_GOL:" + childnode.InnerText);
+						}
+            		}
+		}
+	}
+}
+
+//using
